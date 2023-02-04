@@ -87,21 +87,18 @@
                             ]
                         },
                         "Id": "event_rule_cron_lambda",
-                        "Input": "{\"id\":\"1\", \"action\":\"invoke lambda\"}"
+                        "Input": "{\"source\":\"cloud watch\", \"action\":\"invoke lambda\"}"
                     }
                 ]
             }
         },
         "cwEventPermInvokeLambda": {
             "Type": "AWS::Lambda::Permission",
-            "Properties": {
-                "Action": "lambda:InvokeFunction",
+            "Properties": {                
                 "FunctionName": {
-                    "Fn::GetAtt": [
-                        "lfnCronJobLambda",
-                        "Arn"
-                    ]
-                },
+                    "lfnCronJobLambda"
+                }
+                "Action": "lambda:InvokeFunction",
                 "Principal": "sns.amazonaws.com",
                 "SourceArn": {
                     "Fn::GetAtt": [
