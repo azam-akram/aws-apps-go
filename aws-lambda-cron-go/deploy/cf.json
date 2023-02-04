@@ -45,7 +45,43 @@
                 ]
             }
         },
-        "lfnCronJobLambda": {
+        "cwEventRuleLmabdaInvoke": {
+            "Type": "AWS::Events::Rule",
+            "Properties": {
+                "Description": "Cloud watch event rule to invoke lambda function",
+                "State": "ENABLED",
+                "ScheduleExpression": "rate(1 minute)",
+                "Targets": [
+                    {
+                        "Arn": {
+                            "Fn::GetAtt":[
+                                "lfnScheduleEventLambda",
+                                "Arn"
+                            ]
+                        },
+                        "Id": "event_rule_schedule_lambda",
+                        "Input": "{\"source\":\"cloud watch\", \"action\":\"invoke lambda\"}"
+                    }
+                ]
+            }
+        },
+        "cwEventPermInvokeLambda": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {                
+                "FunctionName": {
+                    "Ref": "lfnScheduleEventLambda"
+                },
+                "Action": "lambda:InvokeFunction",
+                "Principal": "events.amazonaws.com",
+                "SourceArn": {
+                    "Fn::GetAtt": [
+                        "cwEventRuleLmabdaInvoke",
+                        "Arn"
+                    ]
+                }
+            }
+        },
+        "lfnScheduleEventLambda": {
             "Type": "AWS::Lambda::Function",
             "DependsOn": [
                 "lfnLambdaRole"
@@ -64,48 +100,12 @@
                         "Ref": "pLambdaCodeS3KeyPath"
                     }
                 },
-                "Description": "This lambda function triggered by cron job",
+                "Description": "This lambda function triggered by a cron job",
                 "FunctionName": "cron-job-function",
                 "Role": {
                     "Fn::Sub": "${lfnLambdaRole.Arn}"
                 },
                 "Timeout": "120"
-            }
-        },
-        "cwEventRuleLmabdaInvoke": {
-            "Type": "AWS::Events::Rule",
-            "Properties": {
-                "Description": "Cloud watch event rule to invoke lambda function",
-                "State": "ENABLED",
-                "ScheduleExpression": "rate(1 minute)",
-                "Targets": [
-                    {
-                        "Arn": {
-                            "Fn::GetAtt":[
-                                "lfnCronJobLambda",
-                                "Arn"
-                            ]
-                        },
-                        "Id": "event_rule_cron_lambda",
-                        "Input": "{\"source\":\"cloud watch\", \"action\":\"invoke lambda\"}"
-                    }
-                ]
-            }
-        },
-        "cwEventPermInvokeLambda": {
-            "Type": "AWS::Lambda::Permission",
-            "Properties": {                
-                "FunctionName": {
-                    "lfnCronJobLambda"
-                }
-                "Action": "lambda:InvokeFunction",
-                "Principal": "sns.amazonaws.com",
-                "SourceArn": {
-                    "Fn::GetAtt": [
-                        "cwEventRuleLmabdaInvoke",
-                        "Arn"
-                    ]
-                }
             }
         }
     }

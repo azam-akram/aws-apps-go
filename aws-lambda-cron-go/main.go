@@ -8,15 +8,13 @@ import (
 )
 
 type Event struct {
-	ID     string `json:"id,omitempty"`
+	Source string `json:"source,omitempty"`
 	Action string `json:"action,omitempty"`
 }
 
-func HandleRequest(ctx context.Context, event Event) error {
+func HandleRequest(ctx context.Context, event Event) {
 	log.Println("Context: ", ctx)
 	log.Println("Event received: ", event)
-
-	return nil
 }
 
 func main() {
