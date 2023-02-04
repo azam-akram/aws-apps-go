@@ -1,73 +1,74 @@
-AWSTemplateFormatVersion: '2010-09-09'
-Description: A CF template to create a lambda functions and clouwatch cron job
+---
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "A CF template to create a lambda functions and clouwatch cron job"
 Parameters:
   pLambdaCodeBucket:
-    Type: String
+    Type: "String"
   pLambdaCodeS3KeyPath:
-    Type: String
+    Type: "String"
 Resources:
   lfnLambdaRole:
-    Type: AWS::IAM::Role
+    Type: "AWS::IAM::Role"
     Properties:
       AssumeRolePolicyDocument:
-        Version: '2012-10-17'
+        Version: "2012-10-17"
         Statement:
-        - Effect: Allow
+        - Effect: "Allow"
           Principal:
-            Service: lambda.amazonaws.com
-          Action: sts:AssumeRole
+            Service: "lambda.amazonaws.com"
+          Action: "sts:AssumeRole"
       Policies:
-      - PolicyName: lambdaCloudWatchPolicy
+      - PolicyName: "lambdaCloudWatchPolicy"
         PolicyDocument:
           Statement:
-          - Effect: Allow
+          - Effect: "Allow"
             Action:
-            - logs:CreateLogGroup
-            - logs:CreateLogStream
-            - logs:PutLogEvents
+            - "logs:CreateLogGroup"
+            - "logs:CreateLogStream"
+            - "logs:PutLogEvents"
             Resource: "*"
   lfnCronJobLambda:
-    Type: AWS::Lambda::Function
+    Type: "AWS::Lambda::Function"
     DependsOn:
-    - lfnLambdaRole
+    - "lfnLambdaRole"
     Properties:
       Architectures:
-      - x86_64
-      Runtime: go1.x
-      Handler: main
+      - "x86_64"
+      Runtime: "go1.x"
+      Handler: "main"
       Code:
         S3Bucket:
-          Ref: pLambdaCodeBucket
+          Ref: "pLambdaCodeBucket"
         S3Key:
-          Ref: pLambdaCodeS3KeyPath
-      Description: This lambda function triggered by cron job
-      FunctionName: cron-job-function
+          Ref: "pLambdaCodeS3KeyPath"
+      Description: "This lambda function triggered by cron job"
+      FunctionName: "cron-job-function"
       Role:
         Fn::Sub: "${lfnLambdaRole.Arn}"
-      Timeout: '120'
+      Timeout: "120"
   cwEventRuleLmabdaInvoke:
-    Type: AWS::Events::Rule
+    Type: "AWS::Events::Rule"
     Properties:
-      Description: Cloud watch event rule to invoke lambda function
-      State: ENABLED
-      ScheduleExpression: rate(1 minute)
+      Description: "Cloud watch event rule to invoke lambda function"
+      State: "ENABLED"
+      ScheduleExpression: "rate(1 minute)"
       Targets:
       - Arn:
           Fn::GetAtt:
-          - lfnCronJobLambda
-          - Arn
-        Id: event_rule_cron_lambda
-        Input: '{"id":"1", "action":"invoke lambda"}'
+          - "lfnCronJobLambda"
+          - "Arn"
+        Id: "event_rule_cron_lambda"
+        Input: "{\"id\":\"1\", \"action\":\"invoke lambda\"}"
   cwEventPermInvokeLambda:
-    Type: AWS::Lambda::Permission
+    Type: "AWS::Lambda::Permission"
     Properties:
-      Action: lambda:InvokeFunction
+      Action: "lambda:InvokeFunction"
       FunctionName:
         Fn::GetAtt:
-        - lfnCronJobLambda
-        - Arn
-      Principal: sns.amazonaws.com
+        - "lfnCronJobLambda"
+        - "Arn"
+      Principal: "sns.amazonaws.com"
       SourceArn:
         Fn::GetAtt:
-        - cwEventRuleLmabdaInvoke
-        - Arn
+        - "cwEventRuleLmabdaInvoke"
+        - "Arn"
