@@ -4,20 +4,14 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github/aws-apps-go/aws-lambda-external-sns-topic-go/calculation-requester-lambda/model"
+	"github/aws-apps-go/aws-lambda-external-sns-topic-go/calculation-requester-lambda/utils"
+
 	"log"
 	"time"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
-	"github.com/azam-akram/aws-lambda-external-sns-topic-go/common/model"
-	"github.com/azam-akram/aws-lambda-external-sns-topic-go/common/utils"
-)
-
-const (
-	eventNameSumCompleted    = "SumCompleted"
-	eventNameStartingEvent   = "StartingEvent"
-	eventSourceCalculator    = "Calculator"
-	eventSourceCalcRequester = "Calculation Requester"
 )
 
 func HandleRequest(ctx context.Context, snsEvent events.SNSEvent) error {
@@ -32,15 +26,15 @@ func HandleRequest(ctx context.Context, snsEvent events.SNSEvent) error {
 		}
 
 		switch event.Name {
-		case eventNameSumCompleted:
-			if event.Source == eventSourceCalculator {
+		case "SumCompleted":
+			if event.Source == "Calculator" {
 				log.Println("Answer received:", event.Payload.Sum)
 				return nil
 			}
 
-		case eventNameStartingEvent:
+		case "StartingEvent":
 			event.Name = "SumRequested"
-			event.Source = eventSourceCalcRequester
+			event.Source = "Calculation Requester"
 			event.EventTime = time.Now().Format(time.RFC3339)
 
 			log.Println("Event to publish: ", event)

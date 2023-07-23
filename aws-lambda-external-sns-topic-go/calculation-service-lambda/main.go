@@ -4,12 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github/aws-apps-go/aws-lambda-external-sns-topic-go/calculation-service-lambda/model"
+	"github/aws-apps-go/aws-lambda-external-sns-topic-go/calculation-service-lambda/utils"
 	"time"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
-	"github.com/azam-akram/aws-lambda-external-sns-topic-go/common/model"
-	"github.com/azam-akram/aws-lambda-external-sns-topic-go/common/utils"
 )
 
 func processEvent(event *model.Event) error {
