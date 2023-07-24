@@ -1,6 +1,7 @@
 # aws-apps-go
 
 This Git repository contains various AWS applications showcasing different implementation scenarios, such as utilizing AWS Lambda functions, SNS topics, and CloudWatch cron triggers.
+You can find explaination of these applications in respective articles here: https://solutiontoolkit.com
 
 ## Overview
 
