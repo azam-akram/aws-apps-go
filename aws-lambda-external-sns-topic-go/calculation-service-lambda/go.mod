@@ -1,4 +1,4 @@
-module aws-lambda-external-sns-topic-go/calculation-service-lambda
+module github/aws-apps-go/aws-lambda-external-sns-topic-go/calculation-service-lambda
 
 go 1.19
 
