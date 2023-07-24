@@ -14,6 +14,7 @@ More details can be found here: https://solutiontoolkit.com/2023/02/how-to-invok
 
 2. **aws-lambda-external-sns-topic-go**
    - This application illustrates the cross-account integration of different AWS lambda functions through SNS (Simple Notification Service) topics.
+     https://solutiontoolkit.com/2023/07/cross-account-aws-lambda-functions-integration-with-sns/
 
 ## Getting Started
 
